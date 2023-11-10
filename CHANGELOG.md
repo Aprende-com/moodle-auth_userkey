@@ -1,4 +1,7 @@
 # Changelog
+## 2023-10-24
+### Features
+* LMSDEV-5519 added changepasspord for already logged in users by **@Johana Requena** in [95d3cd9e](../../commit/95d3cd9e)
 ## 2023-09-29
 ### Fixes
 * LMSDEV-5433 added firstaccess check instead of primary diplomado by **@Johana Requena** in [b8dc37cb](../../commit/b8dc37cb)
