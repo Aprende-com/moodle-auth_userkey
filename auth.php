@@ -211,9 +211,9 @@ class auth_plugin_userkey extends auth_plugin_base {
 
         $isfirstaccess = $firstaccessdate == date('Y-m-d') ? true : false;
 
-        if ((empty($completed) || $completed == -1) && $isfirstaccess ) {
+        if (empty($completed) && $isfirstaccess ) {
             // Mark onboarding as uncomplete.
-            set_user_preference('onboarding_completed', -1, $user->id);
+            set_user_preference('onboarding_completed', 0, $user->id);
         } else {
             // Add change password flag.
             $redirecturl .= '&changepassword=1';
