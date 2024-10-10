@@ -1118,13 +1118,14 @@ class auth_plugin_test extends advanced_testcase {
         $this->auth = new auth_plugin_userkey();
     
         // Set_user_preference to incompleted
-        set_user_preference('onboarding_completed', -1, $USER->id);
+        set_user_preference('onboarding_completed', 0, $USER->id);
     
         @$this->auth->user_login_userkey();
     
 
         // Set_user_preference to incompleted
-        set_user_preference('onboarding_completed', 1, $USER->id);
+        $usertime = new \DateTime('now', \core_date::get_user_timezone_object($this->user));
+        set_user_preference('onboarding_completed', $usertime->format('Y-m-d H:i:s'), $USER->id);
 
         // Assert that the the user will be redirected to the root URL.
         $this->expectException(moodle_exception::class);
