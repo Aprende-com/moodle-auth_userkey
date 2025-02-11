@@ -143,17 +143,11 @@ class auth_plugin_userkey extends auth_plugin_base {
         $keyvalue = required_param('key', PARAM_ALPHANUM);
         $wantsurl = optional_param('wantsurl', '', PARAM_URL);
 
-        if (!empty($wantsurl)) {
-            $redirecturl = $wantsurl;
-        } if (!empty($this->config->onboardingurl)) {
-            $redirecturl = $this->config->onboardingurl.'?token='.$keyvalue;
-        } else {
-            $redirecturl = $CFG->wwwroot;
-        }
-
         try {
             $key = $this->userkeymanager->validate_key($keyvalue);
         } catch (moodle_exception $exception) {
+            // TODO: SHOW ERROR PAGE.
+
             // If user is logged in and key is not valid, we'd like to logout a user.
             if (isloggedin()) {
                 require_logout();
@@ -161,7 +155,6 @@ class auth_plugin_userkey extends auth_plugin_base {
 
             // try to redirect with moodle redirect function
             $this->redirect($CFG->wwwroot . '/login/index.php');
-
         }
 
         if (isloggedin()) {
@@ -169,17 +162,16 @@ class auth_plugin_userkey extends auth_plugin_base {
                 // Logout the current user if it's different to one that associated to the valid key.
                 require_logout();
             } else {
-                // Don't process further if the user is already logged in.
-                $this->redirect($redirecturl);
+                $this->redirect_to_onboarding($USER, $keyvalue);
             }
         }
 
         $user = get_complete_user_data('id', $key->userid);
-        
         complete_user_login($user);
 
         // Identify this session as using user key auth method.
         $SESSION->userkey = true;
+        $SESSION->wantsurl = $wantsurl;
 
         $this->redirect_to_onboarding($user, $keyvalue);
     }
@@ -198,11 +190,7 @@ class auth_plugin_userkey extends auth_plugin_base {
     	global $CFG, $SESSION, $USER;
         require_once($CFG->dirroot . "/login/lib.php");
 
-        if (!empty($this->config->onboardingurl)) {
-            $redirecturl = $this->config->onboardingurl.'?token='.$keyvalue;
-        } else {
-            $redirecturl = $CFG->wwwroot;
-        }
+        $redirecturl = $CFG->wwwroot . '/local/onboarding/firstsignin.php?key=' . $keyvalue;
 
         // Check if onboarding is completed.
         $completed = get_user_preferences('onboarding_completed', 0, $user->id);
@@ -214,13 +202,10 @@ class auth_plugin_userkey extends auth_plugin_base {
         if (empty($completed) && $isfirstaccess ) {
             // Mark onboarding as uncomplete.
             set_user_preference('onboarding_completed', 0, $user->id);
-        } else {
-            // Add change password flag.
-            $redirecturl .= '&changepassword=1';
         }
 
         // Redirect when done.
-        $SESSION->wantsurl = $redirecturl;
+        $SESSION->onboarding_pw_reset = true;
         $this->redirect($redirecturl);
     }
 
