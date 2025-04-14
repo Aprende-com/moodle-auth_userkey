@@ -146,8 +146,6 @@ class auth_plugin_userkey extends auth_plugin_base {
         try {
             $key = $this->userkeymanager->validate_key($keyvalue);
         } catch (moodle_exception $exception) {
-            // TODO: SHOW ERROR PAGE.
-
             // If user is logged in and key is not valid, we'd like to logout a user.
             if (isloggedin()) {
                 require_logout();
@@ -155,6 +153,10 @@ class auth_plugin_userkey extends auth_plugin_base {
 
             // try to redirect with moodle redirect function
             $this->redirect($CFG->wwwroot . '/login/index.php');
+
+            // In case the redirect fails, kill the script to prevent any further execution.
+            // This should really never happen, just a final safety measure.
+            die();
         }
 
         if (isloggedin()) {
