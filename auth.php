@@ -191,13 +191,8 @@ class auth_plugin_userkey extends auth_plugin_base {
     public function redirect_to_onboarding($user, $keyvalue) {
     	global $CFG, $SESSION, $USER;
         require_once($CFG->dirroot . "/login/lib.php");
-
         
-        if (\local_aprende\utils\plugin_utils::feature_flag_enabled('local_onboarding', 'featureflag_new_onboarding_enabled')) {
-            $redirecturl = $CFG->wwwroot . '/local/onboarding/firstsignin.php';
-        }else{
-            $redirecturl = $CFG->wwwroot . '/local/onboarding/firstsignin.php?key=' . $keyvalue;
-        }
+        $redirecturl = $CFG->wwwroot . '/local/onboarding/firstsignin.php';
 
         // Check if onboarding is completed.
         $completed = get_user_preferences('onboarding_completed', 0, $user->id);
