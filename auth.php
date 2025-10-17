@@ -142,6 +142,7 @@ class auth_plugin_userkey extends auth_plugin_base {
 
         $keyvalue = required_param('key', PARAM_ALPHANUM);
         $wantsurl = optional_param('wantsurl', '', PARAM_URL);
+        $onlyauth = optional_param('onlyauth', false, PARAM_BOOL);
 
         try {
             $key = $this->userkeymanager->validate_key($keyvalue);
@@ -174,6 +175,11 @@ class auth_plugin_userkey extends auth_plugin_base {
         // Identify this session as using user key auth method.
         $SESSION->userkey = true;
         $SESSION->wantsurl = $wantsurl;
+
+        if ($onlyauth) {
+            $this->redirect(new moodle_url($CFG->wwwroot . '/my/'));
+            return;
+        }
 
         $this->redirect_to_onboarding($user, $keyvalue);
     }
