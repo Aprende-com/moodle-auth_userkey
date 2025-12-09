@@ -520,6 +520,15 @@ class auth_plugin_userkey extends auth_plugin_base {
         $mappingfield = $this->get_mapping_field();
 
         switch ($mappingfield) {
+            case  'id':
+                $parameter = array(
+                    'id' => new external_value(
+                        PARAM_INT,
+                        'User ID'
+                    ),
+                );
+                break;
+
             case 'username':
                 $parameter = [
                     'username' => new external_value(
