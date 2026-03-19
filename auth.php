@@ -202,7 +202,10 @@ class auth_plugin_userkey extends auth_plugin_base {
         }
 
         // Redirect when done.
-        $SESSION->onboarding_pw_reset = true;
+        $onlyauth = optional_param('onlyauth', false, PARAM_BOOL);
+        if(!$onlyauth) {
+            $SESSION->onboarding_pw_reset = true;
+        }
         $this->redirect($redirecturl);
     }
 
